@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Numerics;
 
 // Nuget NAudio
 using NAudio.Wave;
@@ -24,14 +25,18 @@ namespace SoundForm
 
 		private WaveIn _wi = null;
 		private WaveFileWriter _writer = null;
-
+	
 		//raw sound plot
 		PlotUtil _p1 = null;
-		private List<float> _recorded1 = new List<float>();
 
 		//processing sound plot
 		PlotUtil _p2 = null;
-		private List<float> _recorded2 = new List<float>();
+
+		//data
+		private List<float> _recorded1 = new List<float>();
+
+		//if you used FFT, 2^N. ex 1024, 2048, 4096
+		private int _sampleNum = 1024; 
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
@@ -42,7 +47,7 @@ namespace SoundForm
 		private void InitSound()
 		{
 			var deviceIndex = 0;
-
+			
 			//Device Info
 			if (WaveIn.DeviceCount > 0)
 			{
@@ -63,8 +68,12 @@ namespace SoundForm
 
 						_recorded1.Add(sample32);
 
-						if (_recorded1.Count == 1024)
+						if (_recorded1.Count == _sampleNum)
+						{
 							_p1.UpdatePlot(_recorded1);
+							_p2.UpdateFFTPlot(_recorded1);
+							_recorded1.Clear();
+						}
 
 						//Analyze Do here 
 						//ee.Buffer[index + 1] = AnalyzedData;
@@ -92,10 +101,10 @@ namespace SoundForm
 			var startPoint = new Point(10, 40);
 			var spaceHeight = 20;
 
-			_p1 = new PlotUtil(this, "p1", startPoint, size);
+			_p1 = new PlotUtil(this, "p1", startPoint, size, -1.0, 1.0);
 			startPoint = new Point(startPoint.X, startPoint.Y + size.Height + spaceHeight);
 
-			_p2 = new PlotUtil(this, "p2", startPoint, size);
+			_p2 = new PlotUtil(this, "p2", startPoint, size, 0, 15);
 		}
 
 		private void RecordButton_Click(object sender, EventArgs e)
@@ -104,9 +113,8 @@ namespace SoundForm
 			{
 				//init data
 				_recorded1 = new List<float>();
-				_recorded2 = new List<float>();
 				_p1.UpdatePlot(_recorded1);
-				_p2.UpdatePlot(_recorded2);
+				_p2.UpdatePlot(_recorded1);
 
 				RecordButton.Text = "Stop";
 				_wi.StartRecording();
@@ -117,7 +125,6 @@ namespace SoundForm
 			}
 		}
 
-
 		private void End()
 		{
 			RecordButton.Enabled = false;
@@ -125,23 +132,17 @@ namespace SoundForm
 
 			if (_writer != null)
 			{
-				_writer.Dispose();
-				_writer = null;
+				_writer.Dispose();  _writer = null;
 			}
 
 			if (_wi != null)
 			{
-				_wi.Dispose();
-				_wi = null;
+				_wi.Dispose(); _wi = null;
 			}
 
 			InitSound();
 			RecordButton.Text = "Start";
 			RecordButton.Enabled = true;
 		}
-
-		
-
-
 	}
 }

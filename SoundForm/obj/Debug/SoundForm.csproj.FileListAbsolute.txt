@@ -15,3 +15,5 @@ D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.pdb
 D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.xml
 D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.WindowsForms.pdb
 D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.WindowsForms.xml
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\MathNet.Numerics.dll
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\MathNet.Numerics.xml
