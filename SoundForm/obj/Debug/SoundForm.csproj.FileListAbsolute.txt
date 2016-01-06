@@ -1,0 +1,17 @@
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\SoundForm.exe.config
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\SoundForm.exe
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\SoundForm.pdb
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\NAudio.dll
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\NAudio.xml
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.csprojResolveAssemblyReference.cache
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.Form1.resources
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.Properties.Resources.resources
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.csproj.GenerateResource.Cache
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.exe
+D:\VisualStudio\SoundForm\SoundForm\obj\Debug\SoundForm.pdb
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.dll
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.WindowsForms.dll
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.pdb
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.xml
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.WindowsForms.pdb
+D:\VisualStudio\SoundForm\SoundForm\bin\Debug\OxyPlot.WindowsForms.xml
