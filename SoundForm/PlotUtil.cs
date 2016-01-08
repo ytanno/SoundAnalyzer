@@ -14,9 +14,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 
-//Nuget Math.NET Numerics
-using MathNet.Numerics.IntegralTransforms;
-using MathNet.Numerics;
+
 
 namespace SoundForm
 {
@@ -25,24 +23,25 @@ namespace SoundForm
 		public PlotView _pv = null;
 		private LineSeries _lineSeries = null;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="setForm">Add WinForm</param>
-		/// <param name="name">Graph Name</param>
-		/// <param name="location">Graph Layout Start Point</param>
-		/// <param name="viewSize">Graph Size</param>
+
+		public PlotUtil(Form1 setForm, string name, Point location, Size viewSize, 
+		double yMin, double yMax, double xMin, double xMax)
+		{
+			SetPlot(setForm, name, location, viewSize, yMin, yMax, xMin, xMax);
+		}
+
 		public PlotUtil(Form1 setForm, string name, Point location, Size viewSize, double yMin, double yMax)
 		{
-			SetPlot(setForm, name, location, viewSize, yMin, yMax);
+			SetPlot(setForm, name, location, viewSize, yMin, yMax, 0, 0);
 		}
 
 		public PlotUtil(Form1 setForm, string name, Point location, Size viewSize)
 		{
-			SetPlot(setForm, name, location, viewSize, 0, 0);
+			SetPlot(setForm, name, location, viewSize, 0, 0, 0, 0);
 		}
 
-		private void SetPlot(Form1 setForm, string name, Point location, Size viewSize, double yMin, double yMax)
+		private void SetPlot(Form1 setForm, string name, Point location, Size viewSize, 
+		double yMin, double yMax, double xMin, double xMax)
 		{
 			_pv = new PlotView();
 			_lineSeries = new LineSeries();
@@ -52,12 +51,20 @@ namespace SoundForm
 			LinearAxis lax1 = new LinearAxis { Position = AxisPosition.Bottom };
 			LinearAxis lax2 = new LinearAxis { Position = AxisPosition.Left };
 
+			if(xMin != xMax)
+			{
+				lax1 = new LinearAxis
+				{
+					Maximum = xMax,
+					Minimum = xMin,
+					Position = AxisPosition.Bottom
+				};
+			}
+
 			if (yMax != yMin)
 			{
 				lax2 = new LinearAxis
 				{
-					//Maximum = 1.0,
-					//Minimum = -1.0,
 					Maximum = yMax,
 					Minimum = yMin,
 					Position = AxisPosition.Left
@@ -97,17 +104,13 @@ namespace SoundForm
 			_pv.InvalidatePlot(true);
 		}
 
-		public void UpdateFFTPlot(List<float> dataList)
+		public void UpdateFFTPlot(List<float> dataList, int sampleRate)
 		{
 			var windowsize = dataList.Count();
-			var window = Window.Hamming(windowsize);
-			var l = dataList.Select((v, i) => v * (float)window[i]).ToList();
 
-			//FFT
-			var c = l.Select(x => new Complex(x, 0.0)).ToArray();
-			Fourier.Forward(c, FourierOptions.Matlab);
+			var c = Sampling.HammingFFT(dataList, windowsize);
 
-			var s = windowsize * (1.0 / 8000.0);
+			var s = windowsize * (1.0 / sampleRate);
 			var point = c.Take(c.Count() / 2).Select((v, index) =>
 					new DataPoint((double)index / s,
 			  Math.Sqrt(v.Real * v.Real + v.Imaginary * v.Imaginary))
@@ -116,10 +119,21 @@ namespace SoundForm
 			_lineSeries.Points.Clear();
 			_lineSeries.Points.AddRange(point);
 
-			var xm = point.Max(d => d.X);
-			var ym = point.Max(d => d.Y);
-
 			_pv.InvalidatePlot(true);
+		}
+
+		public void PlotInvFFT(List<float> dataList, int sampleRate)
+		{
+			var windowsize = dataList.Count();
+			var d = Sampling.FFTFilter(dataList, windowsize);
+
+			var point = d.Select((v, index) =>
+					new DataPoint((double)index, v)
+			).ToList();
+
+			_lineSeries.Points.Clear();
+			_lineSeries.Points.AddRange(point);
+
 		}
 
 
