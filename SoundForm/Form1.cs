@@ -32,6 +32,8 @@ namespace SoundForm
 		//processing sound plot
 		PlotUtil _p2 = null;
 
+        PlotUtil _p3 = null;
+
 		//data
 		private List<float> _recorded1 = new List<float>();
 
@@ -56,31 +58,41 @@ namespace SoundForm
 		private void TestPlot()
 		{
 			
-			List<float> _6Hz = new List<float>();
-			List<float> _2Hz = new List<float>();
+			List<float> _3Hz = new List<float>();
+			List<float> _10Hz = new List<float>();
 			RecordButton.Enabled = false;
 			var angle = 360.0;
-			var testRate = 1024; //sound rate is 8000 but take data is 1024
+            //sound rate is 8000 but take data is 1024
+			var testRate = 1024;
 			var c = angle / testRate;
-			var hz6 = c * 6;
-			var hz2 = c * 2;
+			var hz3 = c * 3;
+			var hz10 = c * 10;
 			var hz400 = c * 400;
 			for (int i = 0; i < testRate; i++)
 			{
-				var hz6v = (float)Math.Sin(hz6 * i * (Math.PI / 180));
-				var hz2v = (float)Math.Sin(hz2 * i * (Math.PI / 180));
-				var hz400v = (float)Math.Sin(hz400 * i * (Math.PI / 180));
-				_2Hz.Add(hz2v);
-				_6Hz.Add(hz6v);
+				var hz3v = (float)Math.Sin(hz3 
+                    * i * (Math.PI / 180));
+				var hz10v = (float)Math.Sin(hz10 * 
+                    i * (Math.PI / 180));
+				var hz400v = (float)Math.Sin(hz400 * 
+                    i * (Math.PI / 180));
+				_3Hz.Add(hz3v);
+				_10Hz.Add(hz10v);
 
 				//sum wave
-				_recorded1.Add(hz6v + hz2v);
+				_recorded1.Add(hz3v + hz10v);
 				//_recorded1.Add(hz400v);
 			}
 
-			_p1.UpdatePlot(_recorded1);
-			//_p2.UpdateFFTPlot(_recorded1,testRate); // FFT Test. plot size xMax = 10.
-			_p2.PlotInvFFT(_recorded1, testRate); //if you can see, change plot size xMax = 1024.
+			_p1.UpdatePlot(_recorded1); //3HZ + 10HZ
+
+             //before FFT, Hamming. 
+            _p2.UpdateFFTPlot(_recorded1, testRate);
+
+            //lowPassFilter = 0   HighPassFilter =  5
+            var f = Sampling.FFTFilter(_recorded1,
+                _recorded1.Count(), testRate, 0, 5);
+            _p3.UpdatePlot(f);
 		}
 
 
@@ -145,7 +157,13 @@ namespace SoundForm
 			startPoint = new Point(startPoint.X, startPoint.Y + size.Height + spaceHeight);
 
 			if(!_testMode)_p2 = new PlotUtil(this, "p2", startPoint, size, 0, 15);
-			if(_testMode) _p2 = new PlotUtil(this, "p2", startPoint, size, 0, 0, 0, 1024);
+			if(_testMode) _p2 = new PlotUtil(this, "p2", startPoint, size, 0, 0, 0, 15);
+
+            startPoint = new Point(startPoint.X, startPoint.Y + size.Height + spaceHeight);
+            _p3 = new PlotUtil(this, "p3", startPoint, size);
+            
+
+
 		}
 
 		private void RecordButton_Click(object sender, EventArgs e)

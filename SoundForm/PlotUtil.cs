@@ -109,9 +109,10 @@ namespace SoundForm
 			var windowsize = dataList.Count();
 
 			var c = Sampling.HammingFFT(dataList, windowsize);
+            //var c = Sampling.TestPlot(dataList, windowsize, sampleRate, 5, 500);
 
 			var s = windowsize * (1.0 / sampleRate);
-			var point = c.Take(c.Count() / 2).Select((v, index) =>
+			var point = c.Take(c.Count() / 1).Select((v, index) =>
 					new DataPoint((double)index / s,
 			  Math.Sqrt(v.Real * v.Real + v.Imaginary * v.Imaginary))
 			).ToList();
@@ -125,7 +126,7 @@ namespace SoundForm
 		public void PlotInvFFT(List<float> dataList, int sampleRate)
 		{
 			var windowsize = dataList.Count();
-			var d = Sampling.FFTFilter(dataList, windowsize);
+			var d = Sampling.FFTFilter(dataList, windowsize, sampleRate, 5 , 500);
 
 			var point = d.Select((v, index) =>
 					new DataPoint((double)index, v)
